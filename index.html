@@ -85,6 +85,9 @@
             } else if (game === 'Battletoads' && region !== 'us') {
                 output.textContent = `game doesn't exist in ${region} region`;
             } else {
+            } else if (game === 'Lagrange Point' && region !== 'jp') {
+                output.textContent = `game doesn't exist in ${region} region`;
+            } else {
                 output.textContent = 'test complete';
             }
         }
