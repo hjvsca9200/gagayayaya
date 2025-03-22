@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Input Box</title>
+    <script>
+        function validateCommand() {
+            const comms = ['load', 'summary'];
+            const cores = ['finalburn_neo', 'nes', 'md'];
+            const reg = ['us', 'jp', 'eu'];
+            const games = ['Lagrange Point', 'Battletoads', 'Alien Soldier'];
+
+            const commandBox = document.getElementById('commandBox');
+            const commandText = commandBox.value.trim().split(' ');
+            const output = document.getElementById('output');
+
+            if (commandText.length !== 4) {
+                output.textContent = 'Invalid command format. Should be: load [core] [game name] [region]';
+                return;
+            }
+
+            const [command, core, game, region] = commandText;
+
+            if (!comms.includes(command)) {
+                output.textContent = 'Invalid command: ' + command;
+            } else if (!cores.includes(core)) {
+                output.textContent = 'Invalid core: ' + core;
+            } else if (!games.includes(game)) {
+                output.textContent = 'Invalid game: ' + game;
+            } else if (!reg.includes(region)) {
+                output.textContent = 'Invalid region: ' + region;
+            } else {
+                output.textContent = 'Success!';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>green skeleton</h1>
+    <p>command formatting should look like this: load [core] [game name] [region]</p>
+    <textarea id="commandBox" rows="10" cols="50" placeholder="Type your commands here..."></textarea>
+    <br>
+    <button onclick="validateCommand()">Submit Command</button>
+    <p id="output"></p>
+</body>
+</html>
