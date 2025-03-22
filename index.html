@@ -36,7 +36,7 @@
             const comms = ['load', 'summary', 'games', 'cores', 'bart'];
             const cores = ['finalburnneo', 'nes', 'md'];
             const reg = ['us', 'jp', 'eu'];
-            const games = {
+             const games = {
                 'Lagrange Point': {
                     core: 'nes',
                     gameName: 'Lagrange Point (Japan)',
@@ -69,7 +69,7 @@
             if (commandParts.length === 1) {
                 const command = commandParts[0];
                 if (command === 'games') {
-                    output.innerHTML = 'Available games:<br>' + Object.keys(games).join('<br>');
+                    output.innerHTML = 'Available games:<br>' + games.join('<br>');
                     return;
                 } else if (command === 'cores') {
                     output.innerHTML = 'Available cores:<br>' + cores.join('<br>');
@@ -92,15 +92,14 @@
                 output.textContent = 'Invalid command: ' + command;
             } else if (!cores.includes(core)) {
                 output.textContent = 'Invalid core: ' + core;
-            } else if (!games[game]) {
+            } else if (!games.includes(game)) {
                 output.textContent = 'Invalid game: ' + game;
             } else if (!reg.includes(region)) {
                 output.textContent = 'Invalid region: ' + region;
             } else if (game === 'Battletoads' && region !== 'us') {
                 output.textContent = `Game doesn't exist in ${region} region`;
             } else {
-                const selectedGame = games[game];
-                window.location.href = `gamepages/emugame.html?core=${selectedGame.core}&gameName=${encodeURIComponent(selectedGame.gameName)}&gameUrl=${encodeURIComponent(selectedGame.gameUrl)}`;
+                output.textContent = 'Success!';
             }
         }
     </script>
@@ -108,7 +107,7 @@
 <body>
     <h1>green skeleton</h1>
     <p>command formatting should look like this: load [core] [game name] [region]</p>
-    <textarea id="commandBox" placeholder="Type your commands here..."></textarea>
+    <textarea id="commandBox" rows="10" cols="50" placeholder="Type your commands here..."></textarea>
     <br>
     <button onclick="validateCommand()">input</button>
     <p id="output"></p>
