@@ -4,34 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Command Input Box</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            background-size: cover; /* Make background image stretch to fit the screen */
+            background-repeat: no-repeat; /* Ensure the background image does not repeat */
+            background-position: center; /* Center the background image */
+        }
+        textarea {
+            background-color: #000;
+            color: white;
+            border: 1px solid #666;
+            resize: none; /* Prevent resizing */
+            height: 50px; /* Set height to 100px */
+        }
+        button {
+            background-color: #000;
+            color: white;
+            border: 1px solid #666;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+    </style>
     <script>
         function validateCommand() {
-            const comms = ['load', 'summary'];
-            const cores = ['finalburn_neo', 'nes', 'md'];
+            const comms = ['load', 'summary', 'games', 'cores', 'bart'];
+            const cores = ['finalburnneo', 'nes', 'md'];
             const reg = ['us', 'jp', 'eu'];
             const games = ['Lagrange Point', 'Battletoads', 'Alien Soldier'];
 
             const commandBox = document.getElementById('commandBox');
-            const commandText = commandBox.value.trim().split(' ');
+            const commandText = commandBox.value.trim();
+
             const output = document.getElementById('output');
 
-            if (commandText.length !== 4) {
-                output.textContent = 'Invalid command format. Should be: load [core] [game name] [region]';
+            if (commandText === '') {
+                output.textContent = "... where's the command?";
                 return;
             }
 
-            const [command, core, game, region] = commandText;
+            const commandParts = commandText.split(' ');
+
+            if (commandParts.length === 1) {
+                const command = commandParts[0];
+                if (command === 'games') {
+                    output.innerHTML = 'available games:<br>' + games.join('<br>');
+                    return;
+                } else if (command === 'cores') {
+                    output.innerHTML = 'available cores:<br>' + cores.join('<br>');
+                    return;
+                } else if (command === 'comms') {
+                    output.innerHTML = 'available commands:<br>' + comms.join('<br>');
+                    return;
+                } else if (command === 'bart') {
+                    document.body.style.backgroundImage = "url('https://file.garden/Zdko1-gxzVCR-6XW/bart.jpg')";
+                    return;
+                }
+            }
+
+            if (commandParts.length !== 4) {
+                output.textContent = 'invalid command format. should be: [comm] [core] [game name] [region]';
+                return;
+            }
+
+            const [command, core, game, region] = commandParts;
 
             if (!comms.includes(command)) {
-                output.textContent = 'Invalid command: ' + command;
+                output.textContent = 'invalid command: ' + command;
             } else if (!cores.includes(core)) {
-                output.textContent = 'Invalid core: ' + core;
+                output.textContent = 'invalid core: ' + core;
             } else if (!games.includes(game)) {
-                output.textContent = 'Invalid game: ' + game;
+                output.textContent = 'invalid game: ' + game;
             } else if (!reg.includes(region)) {
-                output.textContent = 'Invalid region: ' + region;
+                output.textContent = 'invalid region: ' + region;
+            } else if (game === 'Battletoads' && region !== 'us') {
+                output.textContent = `game doesn't exist in ${region} region`;
             } else {
-                output.textContent = 'Success!';
+                output.textContent = 'test complete';
             }
         }
     </script>
@@ -39,9 +93,9 @@
 <body>
     <h1>green skeleton</h1>
     <p>command formatting should look like this: load [core] [game name] [region]</p>
-    <textarea id="commandBox" rows="10" cols="50" placeholder="Type your commands here..."></textarea>
+    <textarea id="commandBox" rows="10" cols="50" placeholder="try the comms command if you need help"></textarea>
     <br>
-    <button onclick="validateCommand()">Submit Command</button>
+    <button onclick="validateCommand()">input</button>
     <p id="output"></p>
 </body>
 </html>
