@@ -1,25 +1,28 @@
 body {
-            background-color: black;
-            color: white;
-            font-family: Arial, sans-serif;
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-        textarea {
-            background-color: #000;
-            color: white;
-            border: 1px solid #666;
-            resize: none;
-            height: 50px;
-        }
-        button {
-            background-color: #000;
-            color: white;
-            border: 1px solid #666;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #555;
-        }
+	background-color: black;
+	color: white;
+	font-family: Arial, sans-serif;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.textarea {
+	background-color: #000;
+	color: white;
+	border: 1px solid #666;
+	resize: none;
+	height: 50px;
+}
+
+.button {
+	background-color: #000;
+	color: white;
+	border: 1px solid #666;
+	padding: 10px 20px;
+	cursor: pointer;
+}
+
+.button:hover {
+	background-color: #555;
+}
