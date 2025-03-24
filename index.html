@@ -8,7 +8,7 @@
         body {
             background-color: black;
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'Inconsolata', monospace;
             background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
@@ -16,6 +16,7 @@
         textarea {
             background-color: #000;
             color: white;
+            font-family: 'Inconsolata', monospace;
             border: 1px solid #666;
             resize: none;
             height: 50px;
@@ -23,8 +24,9 @@
         button {
             background-color: #000;
             color: white;
+            font-family: 'Inconsolata', monospace;
             border: 1px solid #666;
-            padding: 10px 20px;
+            padding: 10px 30px;
             cursor: pointer;
         }
         button:hover {
@@ -33,10 +35,9 @@
     </style>
     <script>
         function validateCommand() {
-            const comms = ['load', 'summary', 'games', 'cores', 'bart'];
-            const cores = ['finalburnneo', 'nes', 'md', 'flash'];
-            const reg = ['us', 'jp', 'eu'];
-            const games = ['Lagrange Point', 'Battletoads', 'Alien Soldier'];
+            const comms = ['load', 'games', 'cores', 'bart', 'help'];
+            const cores = ['arcade', 'nes', 'segaMD', 'flash'];
+            const games = ['LagrangePoint_JP', 'Battletoads', 'AlienSoldier_JP', 'LagrangePoint_US'];
 
             const commandBox = document.getElementById('commandBox');
             const commandText = commandBox.value.trim();
@@ -50,6 +51,11 @@
 
             const commandParts = commandText.split(' ');
 
+            if (!comms.includes(commandParts[0])) {
+                output.textContent = "invalid command: " + commandParts[0];
+                return;
+            }
+
             if (commandParts.length === 1) {
                 const command = commandParts[0];
                 if (command === 'games') {
@@ -58,34 +64,100 @@
                 } else if (command === 'cores') {
                     output.innerHTML = 'available cores:<br>' + cores.join('<br>');
                     return;
-                } else if (command === 'comms') {
+                } else if (command === 'help') {
                     output.innerHTML = 'available commands:<br>' + comms.join('<br>');
                     return;
                 } else if (command === 'bart') {
                     document.body.style.backgroundImage = "url('https://file.garden/Zdko1-gxzVCR-6XW/bart.jpg')";
                     return;
+                } else if (command === 'title_rmv') {
+                    document.title = "testing";
+                    return;
                 }
             }
 
-            if (commandParts.length !== 4) {
-                output.textContent = 'invalid command format. should be: [comm] [core] [game name] [region]';
+            if (commandParts.length === 2) {
+                const [command, gameName] = commandParts;
+                const summaries = {
+                    'AlienSoldier': `Alien Soldier Summary<br>
+Developer: Treasure<br>
+Year: 1995<br>
+Core: segaMD<br>
+ROM: Alien_Soldier_Japan.md<br>
+Status: Working`,
+                    'LagrangePoint': `Lagrange Point Summary<br>
+Developer: Konami<br>
+Year: 1992<br>
+Core: nes<br>
+ROM: Lagrange Point (T+Eng).nes<br>
+Status: Working`,
+                    'Battletoads': `Battletoads Summary<br>
+Developer: Electronic Arts, Rare<br>
+Year: 1994<br>
+Core: arcade<br>
+ROM: btoads.zip<br>
+Status: Working`
+                };
+
+                if (command === 'summary' && summaries[gameName]) {
+                    output.innerHTML = summaries[gameName];
+                    return;
+                } else if (summaries[command] && gameName === 'summary') {
+                    output.textContent = "invalid syntax. should: summary [gameName]";
+                    return;
+                }
+            }
+
+            if (commandParts.length === 3) {
+                const [command, core, game] = commandParts;
+
+                if (command === 'load' && cores.includes(core) && games.includes(game)) {
+                    let gameUrl = "";
+                    let gameName = "";
+
+                    if (core === "segaMD" && game === "AlienSoldier_JP") {
+                        gameUrl = "https://file.garden/Zdko1-gxzVCR-6XW/gameroms/Alien_Soldier_Japan.md";
+                        gameName = "Alien Soldier (Japan)";
+                    } else if (core === "nes" && game === "LagrangePoint_JP") {
+                        gameUrl = "https://file.garden/Zdko1-gxzVCR-6XW/gameroms/Lagrange%20Point%20(T%2BEng).nes";
+                        gameName = "Lagrange Point (Eng)";
+                    }
+
+                    if (gameUrl && gameName) {
+                        const scriptContent = `
+                            EJS_player = "#game";
+                            EJS_core = "${core}";
+                            EJS_gameName = "${gameName}";
+                            EJS_color = "#0064ff";
+                            EJS_startOnLoaded = true;
+                            EJS_pathtodata = "/data";
+                            EJS_gameUrl = "${gameUrl}";
+                        `;
+                        const scriptElement = document.createElement('script');
+                        scriptElement.textContent = scriptContent;
+                        document.body.appendChild(scriptElement);
+
+                        const loaderScript = document.createElement('script');
+                        loaderScript.src = "/data/loader.js";
+                        document.body.appendChild(loaderScript);
+
+                        output.textContent = `Loading ${gameName}...`;
+                        return;
+                    }
+                }
+            }
+
+            if (commandParts.length !== 3) {
+                output.textContent = 'invalid syntax. should be: [comm] [core] [gameName]';
                 return;
             }
 
-            const [command, core, game, region] = commandParts;
+            const [command, core, game] = commandParts;
 
-            if (!comms.includes(command)) {
-                output.textContent = 'invalid command: ' + command;
-            } else if (!cores.includes(core)) {
+            if (!cores.includes(core)) {
                 output.textContent = 'invalid core: ' + core;
             } else if (!games.includes(game)) {
                 output.textContent = 'invalid game: ' + game;
-            } else if (!reg.includes(region)) {
-                output.textContent = 'invalid region: ' + region;
-            } else if (game === 'Battletoads' && region !== 'us') {
-                output.textContent = `game doesn't exist in ${region} region`;
-            } else if (game === 'Lagrange Point' && region !== 'jp') {
-                output.textContent = `game doesn't exist in ${region} region`;
             } else {
                 output.textContent = 'test complete';
             }
@@ -94,8 +166,8 @@
 </head>
 <body>
     <h1>green skeleton</h1>
-    <p>command formatting should look like this: load [core] [game name] [region]</p>
-    <textarea id="commandBox" rows="10" cols="50" placeholder="try the comms command if you need help"></textarea>
+    <p>when loading a game, proper syntax should look like this: [comm] [core] [game name]</p>
+    <textarea id="commandBox" rows="10" cols="50" placeholder="use the help command to display a list of the available commands"></textarea>
     <br>
     <button onclick="validateCommand()">input</button>
     <p id="output"></p>
